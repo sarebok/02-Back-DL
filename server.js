@@ -36,8 +36,7 @@ app.put("/canciones/:id", (req, res) => {
 
 
         // Encuentra el índice del producto que se va a actualizar
-        const indice = productos.findIndex(producto => producto.id === id);
-        console.log(indice);
+        const indice = productos.findIndex(producto => parseInt(producto.id) === parseInt(id));
 
         if (indice !== -1) { // Verifica si se encontró el producto
             // Actualiza el producto en el índice encontrado con la nueva información
@@ -64,7 +63,7 @@ app.delete("/canciones/:id", (req, res) => {
 
 
         // Encuentra el índice del producto que se va a actualizar
-        const indice = productos.findIndex(producto => producto.id === id);
+        const indice = productos.findIndex(producto=>parseInt(producto.id) === parseInt(id));
         console.log(indice);
 
         if (indice !== -1) { 
