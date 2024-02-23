@@ -10,12 +10,12 @@ const PORT = process.env.PORT || 3000
 //guarda instancia de express en una variable, en este caso, app
 const app=express() 
 
+//incluido para leer documentos en la carpeta public del proyecto, en este caso el index.html
+app.use(express.static('public'));
 app.use(express.json())
 
-app.get("/",(req,res)=>{
-/*     const {id, cancion, artista, tono} = req.query
-    console.log(req.query);
-    res.json(req.query) */
+app.get("/canciones",(req,res)=>{
+
     fs.readFile('repertorio.json', 'utf8', (err, data) => {
         if (err) {
             console.error(err);
@@ -31,7 +31,8 @@ app.get("/",(req,res)=>{
     });
 })
 
-app.post("/",(req,res)=>{
+
+app.post("/canciones",(req,res)=>{
     const cancion =req.body
     console.log(cancion);
     const canciones=JSON.parse(fs.readFileSync("repertorio.json"))
@@ -73,9 +74,7 @@ app.put("/canciones/:id", (req, res) => {
 
 app.delete("/canciones/:id", (req, res) => {
     const { id } = req.params;
-    const cancionEliminada = req.body;
     let canciones = JSON.parse(fs.readFileSync("repertorio.json", "utf8"));
-
 
         // Encuentra el índice del producto que se va a actualizar
         const indice = canciones.findIndex(cancion=>parseInt(cancion.id) === parseInt(id));
@@ -93,7 +92,6 @@ app.delete("/canciones/:id", (req, res) => {
             // Si no se encuentra la cancion, envía un error 404
             res.status(404).send("Canción no encontrada");
         }
-
 });
 
 /* app.put("/editar",(req,res)=>{
