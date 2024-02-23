@@ -13,17 +13,31 @@ const app=express()
 app.use(express.json())
 
 app.get("/",(req,res)=>{
-    const {id, nombre, precio} = req.query
+/*     const {id, cancion, artista, tono} = req.query
     console.log(req.query);
-    res.json(req.query)
+    res.json(req.query) */
+    fs.readFile('repertorio.json', 'utf8', (err, data) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("Error al leer el archivo");
+        }
+        try {
+            const obj = JSON.parse(data);
+            res.json(obj);
+        } catch (error) {
+            console.error(error);
+            return res.status(500).send("Error al parsear el archivo JSON");
+        }
+    });
 })
 
-app.post("/canciones",(req,res)=>{
-    const producto =req.body
-    const productos=JSON.parse(fs.readFileSync("repertorio.json"))
-    productos.push(producto)
-    console.log("por json",productos);
-    fs.writeFileSync("repertorio.json",JSON.stringify(productos))
+app.post("/",(req,res)=>{
+    const cancion =req.body
+    console.log(cancion);
+    const canciones=JSON.parse(fs.readFileSync("repertorio.json"))
+    canciones.push(cancion)
+    console.log("por json",canciones);
+    fs.writeFileSync("repertorio.json",JSON.stringify(canciones))
 
     console.log(req.body);
     res.json(req.body)
@@ -32,21 +46,21 @@ app.post("/canciones",(req,res)=>{
 app.put("/canciones/:id", (req, res) => {
     const { id } = req.params;
     const nuevaCancion = req.body;
-    let productos = JSON.parse(fs.readFileSync("repertorio.json", "utf8"));
+    let canciones = JSON.parse(fs.readFileSync("repertorio.json", "utf8"));
 
 
         // Encuentra el índice del producto que se va a actualizar
-        const indice = productos.findIndex(producto => parseInt(producto.id) === parseInt(id));
+        const indice = canciones.findIndex(cancion => parseInt(cancion.id) === parseInt(id));
 
-        if (indice !== -1) { // Verifica si se encontró el producto
-            // Actualiza el producto en el índice encontrado con la nueva información
-            productos[indice] = { ...productos[indice], ...nuevaCancion };
+        if (indice !== -1) { // Verifica si se encontró la cancion
+            // Actualiza la cancion en el índice encontrado con la nueva información
+            canciones[indice] = { ...canciones[indice], ...nuevaCancion };
     
             // Escribe los cambios en repertorio.json
-            fs.writeFileSync("repertorio.json", JSON.stringify(productos));
+            fs.writeFileSync("repertorio.json", JSON.stringify(canciones));
     
             // Envía una respuesta con la canción actualizada
-            res.json(productos[indice]);
+            res.json(canciones[indice]);
         } else {
             // Si no se encuentra el producto, envía un error 404
             res.status(404).send("Canción no encontrada");
@@ -56,26 +70,27 @@ app.put("/canciones/:id", (req, res) => {
     /* res.send("Listado de canciones actualizado") */
 
 });
+
 app.delete("/canciones/:id", (req, res) => {
     const { id } = req.params;
     const cancionEliminada = req.body;
-    let productos = JSON.parse(fs.readFileSync("repertorio.json", "utf8"));
+    let canciones = JSON.parse(fs.readFileSync("repertorio.json", "utf8"));
 
 
         // Encuentra el índice del producto que se va a actualizar
-        const indice = productos.findIndex(producto=>parseInt(producto.id) === parseInt(id));
+        const indice = canciones.findIndex(cancion=>parseInt(cancion.id) === parseInt(id));
         console.log(indice);
 
         if (indice !== -1) { 
-            productos.splice(indice,1);
+            canciones.splice(indice,1);
     
             // Escribe los cambios en repertorio.json
-            fs.writeFileSync("repertorio.json", JSON.stringify(productos));
+            fs.writeFileSync("repertorio.json", JSON.stringify(canciones));
     
             // Envía una respuesta con la canción actualizada
-            res.json(productos[indice]);
+            res.json(canciones[indice]);
         } else {
-            // Si no se encuentra el producto, envía un error 404
+            // Si no se encuentra la cancion, envía un error 404
             res.status(404).send("Canción no encontrada");
         }
 
