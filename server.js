@@ -3,7 +3,6 @@ import express from "express";
 //recordar "dev": "node --watch server.js"
 
 import fs from "fs";
-import { stringify } from "querystring";
 
 const PORT = process.env.PORT || 3000
 
@@ -12,8 +11,12 @@ const app=express()
 
 //incluido para leer documentos en la carpeta public del proyecto, en este caso el index.html
 app.use(express.static('public'));
+
+//middleware
 app.use(express.json())
 
+
+//funcion get. Establece la ruta segun lo indicado en el index.html
 app.get("/canciones",(req,res)=>{
 
     fs.readFile('repertorio.json', 'utf8', (err, data) => {
@@ -94,11 +97,5 @@ app.delete("/canciones/:id", (req, res) => {
         }
 });
 
-/* app.put("/editar",(req,res)=>{
-    
-})
-app.delete("/eliminar",(req,res)=>{
-    
-}) */
 
 app.listen(PORT,console.log(`server on https//localhost:${PORT}`))
